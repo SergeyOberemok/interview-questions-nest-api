@@ -2,20 +2,21 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { from, Observable } from 'rxjs';
-import { UserDto } from 'src/data-layer/models';
-import { User, UserDocument } from 'src/database-layer/schema/user.schema';
+import { CreateUserDto } from './dto/create-user.dto';
+import { User } from './entities/user.entity';
+import { UserDocument } from './schema/user.schema';
 
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  findAll(): Observable<User[]> {
-    return from(this.userModel.find().exec());
-  }
-
-  create(userDto: UserDto): Observable<User> {
-    const user = new this.userModel(userDto);
+  create(createUserDto: CreateUserDto): Observable<User> {
+    const user = new this.userModel(createUserDto);
 
     return from(user.save());
+  }
+
+  findAll(): Observable<User[]> {
+    return from(this.userModel.find().exec());
   }
 }
